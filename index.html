@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Graphic Era Hill University Lost and Found</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1 { text-align: center; }
+    form, .item-list {
+      max-width: 500px; margin: 20px auto;
+      padding: 20px; border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    input, textarea, button {
+      width: 100%; padding: 10px; margin: 5px 0;
+    }
+    .item {
+      border-bottom: 1px solid #ddd; padding: 10px 0;
+    }
+    img { max-width: 100px; display: block; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Graphic Era Hill University Lost and Found</h1>
+
+  <form id="uploadForm" action="upload.php" method="POST" enctype="multipart/form-data">
+    <h3>Upload Lost/Found Item</h3>
+    <input type="text" name="itemName" placeholder="Item Name" required>
+    <textarea name="itemDetails" placeholder="Item Details" required></textarea>
+    <input type="file" name="itemImage" accept="image/*" required>
+    <button type="submit">Submit</button>
+  </form>
+
+  <form id="searchForm">
+    <h3>Search Item</h3>
+    <input type="text" id="searchQuery" placeholder="Enter keyword">
+    <button type="submit">Search</button>
+  </form>
+
+  <div class="item-list" id="results">
+    <h3>Item Listings</h3>
+  </div>
+
+  <script>
+    async function fetchItems(query = '') {
+      const res = await fetch(`search.php?q=${query}`);
+      const items = await res.json();
+      const results = document.getElementById('results');
+      results.innerHTML = '<h3>Item Listings</h3>';
+      items.forEach(item => {
+        results.innerHTML += \`
+          <div class="item">
+            <strong>\${item.name}</strong>
+            <p>\${item.details}</p>
+            <img src="uploads/\${item.image}" alt="Item Image">
+            <p><em>Contact college authority to claim/report</em></p>
+          </div>\`;
+      });
+    }
+
+    document.getElementById('searchForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const query = document.getElementById('searchQuery').value;
+      fetchItems(query);
+    });
+
+    fetchItems();
+  </script>
+</body>
+</html>
